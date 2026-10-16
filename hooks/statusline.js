@@ -64,8 +64,8 @@ const ICON_SETS = {
              vim: 'V', agent: '◉',
              barFill: '█', barEmpty: '░',
              sep: '┊', skills: '✦', hr: '─' },
-  ascii:   { effort: '!', branch: 'git:', worktree: 'wt:', dir: 'dir:', duration: '',
-             lines: '', r5h: '5h', r7d: '7d', rspend: 'spend', rreset: 'reset', rsep: ',', skull: '!!',
+  ascii:   { effort: '!', branch: 'git:', worktree: 'wt:', dir: 'dir:', duration: 't:',
+             lines: 'd', r5h: '5h', r7d: '7d', rspend: 'spend', rreset: 'reset', rsep: ',', skull: '!!',
              vim: 'V', agent: '@',
              barFill: '#', barEmpty: '-',
              sep: '|', skills: '*', hr: '-' },
@@ -168,18 +168,13 @@ function formatBudgetCost(cost, limit, prefix) {
  */
 function formatDuration(ms, icon) {
   if (ms == null || ms <= 0) return '';
-  return [icon, formatElapsed(ms)].filter(Boolean).join(' ');
-}
-
-function formatElapsed(ms) {
   const s = Math.floor(ms / 1000);
-  if (s < 60) return `${s}s`;
+  if (s < 60) return `${icon} ${s}s`;
   const m = Math.floor(s / 60);
-  if (m < 60) return `${m}m`;
+  if (m < 60) return `${icon} ${m}m`;
   const h = Math.floor(m / 60);
   const rem = m % 60;
-  if (rem === 0) return `${h}h`;
-  return `${h}h ${rem}m`;
+  return rem > 0 ? `${icon} ${h}h ${rem}m` : `${icon} ${h}h`;
 }
 
 /**
@@ -487,7 +482,7 @@ function render(data, env) {
     const addedParts = [];
     if (linesAdded > 0) addedParts.push(green(`+${linesAdded}`));
     if (linesRemoved > 0) addedParts.push(red(`-${linesRemoved}`));
-    if (addedParts.length > 0) add('lines', [icons.lines, ...addedParts].filter(Boolean).join(' '));
+    if (addedParts.length > 0) add('lines', `${icons.lines} ${addedParts.join(' ')}`);
 
     // Rate limits (Claude.ai Pro/Max 5h/7d + gateway spend limit) — merged into one segment
     if (segEnabled('ratelimits')) {

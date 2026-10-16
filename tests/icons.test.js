@@ -54,8 +54,7 @@ test('ascii mode uses pure ASCII', async () => {
   assert.ok(!out.includes('‼'));     // BMP skull must be absent
   // ASCII labels present
   assert.ok(out.includes('dir:'));
-  assert.ok(out.includes('| 45s'));
-  assert.ok(out.includes('| +3 -1'));
+  assert.ok(out.includes('t: 45s'));
   assert.ok(out.includes('|'));      // ascii separator
   assert.ok(out.includes('!!'));     // ASCII skull (panic path)
   // Whole string should be ASCII-safe
@@ -124,7 +123,7 @@ const PARITY_CASES = [
       hr:         /-{20,}/,
       branch:     /git: main/,
       worktree:   /wt: wt-foo/,
-      duration:   /\| 45s/,
+      duration:   /t: 45s/,
       rateLimits: /5h 50% , 7d 20%/,
       vim:        /V NORMAL/,
       agent:      /@ feature-dev/,

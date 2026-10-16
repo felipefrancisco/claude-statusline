@@ -97,7 +97,7 @@ Sonnet 5 ┊ ⎇ main ┊ ▸ claude-statusline ┊ s $0.42 $8.17/h · d $9.72 �
 And `ascii`:
 
 ```text
-Sonnet 5 | git: main | dir: claude-statusline | s $0.42 $8.17/h , d $9.72 , w $31.87 , m $112.27 | 3m | +47 -12 | ---------- 9% , 19k
+Sonnet 5 | git: main | dir: claude-statusline | s $0.42 $8.17/h , d $9.72 , w $31.87 , m $112.27 | t: 3m | d +47 -12 | ---------- 9% , 19k
 ```
 
 The full glyph table for each mode lives in `ICON_SETS` inside [`hooks/statusline.js`](hooks/statusline.js).
