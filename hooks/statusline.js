@@ -155,12 +155,16 @@ function formatPeriodCost(cost, limit, prefix) {
 
 /**
  * Format the monthly cost against its budget: `m $X/$10K (P%)`, % floored like the spend-limit chip.
+ * Dim until the last budget tier (90%), then red.
  */
 function formatBudgetCost(cost, limit, prefix) {
   if (!cost || cost <= 0) return '';
   const pct = Math.floor(cost / limit * 100);
   const compactLimit = '$' + formatCompact(limit).toUpperCase();
-  return colorByTier(cost / limit, BUDGET_TIERS)(`${prefix}${money(cost)}/${compactLimit} (${pct}%)`);
+  const chip = `${prefix}${money(cost)}/${compactLimit} (${pct}%)`;
+  const isNearBudget = cost / limit >= BUDGET_TIERS[BUDGET_TIERS.length - 1];
+  if (isNearBudget) return red(chip);
+  return dim(chip);
 }
 
 /**

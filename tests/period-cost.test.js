@@ -233,6 +233,16 @@ test('STATUSLINE_MONTHLY_PROGRESS → m chip shows spend over budget with floore
   assert.ok(out.includes('m $1234.00/$10K (12%)'));
 });
 
+test('STATUSLINE_MONTHLY_PROGRESS → m chip dim under 90%, red from 90%', async () => {
+  const progress = { STATUSLINE_MONTHLY_BUDGET: '10000', STATUSLINE_MONTHLY_PROGRESS: '1' };
+  const i = baseInput();
+  i.session_id = 'current';
+  const under = await runRaw(i, { ...progress, XDG_STATE_HOME: stateWithCache({ other: { days: { [todayKey()]: 8999 }, total: 8999 } }) });
+  const over = await runRaw(i, { ...progress, XDG_STATE_HOME: stateWithCache({ other: { days: { [todayKey()]: 9000 }, total: 9000 } }) });
+  assert.equal(colorOf(under, 'm $8999.00'), '2');
+  assert.equal(colorOf(over, 'm $9000.00'), '31');
+});
+
 test('m chip without STATUSLINE_MONTHLY_PROGRESS stays a plain amount', async () => {
   const xdg = stateWithCache({ other: { days: { [todayKey()]: 1234 }, total: 1234 } });
   const i = baseInput();

@@ -124,7 +124,7 @@ Everything is configured with environment variables, set under `env` in `~/.clau
 | `STATUSLINE_ICONS` | `ascii` on first run | `nerd` / `unicode` / `ascii`. See [Icons](#icons) |
 | `STATUSLINE_MONTHLY_BUDGET` | `1000` | monthly budget driving d/w/m chip colors; `0` hides those chips. Unset → a monthly gateway spend limit (`limit_usd`) if present |
 | `STATUSLINE_COST_PERIODS` | `d,w,m` | which period chips render next to `s`. See [Cost tracking](#cost-tracking) |
-| `STATUSLINE_MONTHLY_PROGRESS` | unset | set it to anything to show the `m` chip as spend over budget with a % |
+| `STATUSLINE_MONTHLY_PROGRESS` | unset | set it to anything to show the `m` chip as spend over budget with a %, dim until 90% then red |
 | `STATUSLINE_NO_BURN_RATE` | unset | set it to anything to hide the `$X/h` burn rate on the `s` chip |
 | `STATUSLINE_COST_MULTIPLIER` | `1` | scales the displayed cost to match a plan meter. See [Matching your plan's billing page](#matching-your-plans-billing-page) |
 | `STATUSLINE_TIMEZONE` | system local | IANA zone deciding the day/week/month cost boundaries. See [Timezone](#timezone) |
