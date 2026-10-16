@@ -126,6 +126,7 @@ Everything is configured with environment variables, set under `env` in `~/.clau
 | `STATUSLINE_COST_PERIODS` | `d,w,m` | which period chips render next to `s`. See [Cost tracking](#cost-tracking) |
 | `STATUSLINE_MONTHLY_PROGRESS` | unset | set it to anything to show the `m` chip as spend over budget with a %, dim until 90% then red |
 | `STATUSLINE_NO_BURN_RATE` | unset | set it to anything to hide the `$X/h` burn rate on the `s` chip |
+| `STATUSLINE_WORKTREE_LAST_SEGMENT` | unset | set it to anything to show only the worktree name after its last `-`, e.g. `statusline-update` becomes `update` |
 | `STATUSLINE_COST_MULTIPLIER` | `1` | scales the displayed cost to match a plan meter. See [Matching your plan's billing page](#matching-your-plans-billing-page) |
 | `STATUSLINE_TIMEZONE` | system local | IANA zone deciding the day/week/month cost boundaries. See [Timezone](#timezone) |
 | `STATUSLINE_PRICING_NO_FETCH` | unset | set it to anything to block the background price fetch and stay on the bundled snapshot |

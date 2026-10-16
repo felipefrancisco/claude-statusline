@@ -97,3 +97,17 @@ test('no worktree in input — 󰘬 shown normally', async () => {
     fs.rmSync(dir, { recursive: true });
   }
 });
+
+test('STATUSLINE_WORKTREE_LAST_SEGMENT keeps only the part after the last dash', async () => {
+  const i = baseInput();
+  i.worktree = { name: 'agent-4f1c2b9e-7d3a-41b2-9c55-0e8f6a2d1b7c' };
+  const out = await run(i, { STATUSLINE_WORKTREE_LAST_SEGMENT: '1' });
+  assert.ok(out.includes('󰘯 0e8f6a2d1b7c'));
+  assert.ok(!out.includes('agent-4f1c2b9e'));
+});
+
+test('worktree name stays whole without STATUSLINE_WORKTREE_LAST_SEGMENT', async () => {
+  const i = baseInput();
+  i.worktree = { name: 'statusline-update' };
+  assert.ok((await run(i)).includes('󰘯 statusline-update'));
+});

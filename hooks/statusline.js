@@ -167,6 +167,11 @@ function formatBudgetCost(cost, limit, prefix) {
   return dim(chip);
 }
 
+function formatWorktreeLabel(name, env) {
+  if (env.STATUSLINE_WORKTREE_LAST_SEGMENT == null) return name;
+  return name.split('-').pop();
+}
+
 /**
  * Format milliseconds as compact human duration: 45s, 10m, 1h 5m.
  */
@@ -384,7 +389,7 @@ function render(data, env) {
     }
 
     // Worktree
-    if (worktreeName) add('worktree', dim(`${icons.worktree} ${worktreeName}`));
+    if (worktreeName) add('worktree', dim(`${icons.worktree} ${formatWorktreeLabel(worktreeName, env)}`));
 
     // Agent name
     if (agentName) add('agent', bold(`${icons.agent} ${agentName}`));
