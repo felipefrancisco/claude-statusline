@@ -10,7 +10,7 @@ const { readSummary } = require('../lib/cost-aggregate');
 const { sumPeriods } = require('../lib/periods');
 const { resolveTimezone } = require('../lib/timezone');
 const { resolveBudget, resolveCostMultiplier, resolveCostPeriods, isMonthly } = require('../lib/budget');
-const { formatCompact, money, MONTHS } = require('../lib/format');
+const { formatCompact, money, toSmallCaps, MONTHS } = require('../lib/format');
 
 // Terminal width, for the trailing rule and for wrapping segments onto
 // multiple lines. Real TTY columns wins; else COLUMNS env (Claude Code's TUI
@@ -165,6 +165,11 @@ function formatBudgetCost(cost, limit, prefix) {
   const isNearBudget = cost / limit >= BUDGET_TIERS[BUDGET_TIERS.length - 1];
   if (isNearBudget) return red(chip);
   return dim(chip);
+}
+
+function parseSegmentNames(raw) {
+  if (raw == null) return [];
+  return String(raw).split(',').map((s) => s.trim()).filter(Boolean);
 }
 
 /**
@@ -504,6 +509,12 @@ function render(data, env) {
       const inStr = formatCompact(inputTokens);
       const suffix = inStr ? ` ${dim(`${icons.rsep} ${inStr}`)}` : '';
       add('context', `${ctxBar}${suffix}`);
+    }
+
+    const smallCapsNames = parseSegmentNames(env.STATUSLINE_SMALL_CAPS);
+    for (const segment of segments) {
+      if (!smallCapsNames.includes(segment.name)) continue;
+      segment.value = dim(toSmallCaps(stripAnsi(segment.value)));
     }
 
     // Optional allowlist + order via STATUSLINE_SEGMENTS env var (parsed once above).
