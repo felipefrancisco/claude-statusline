@@ -64,8 +64,8 @@ const ICON_SETS = {
              vim: 'V', agent: '◉',
              barFill: '█', barEmpty: '░',
              sep: '┊', skills: '✦', hr: '─' },
-  ascii:   { effort: '!', branch: 'git:', worktree: 'wt:', dir: 'dir:', duration: 't:',
-             lines: 'd', r5h: '5h', r7d: '7d', rspend: 'spend', rreset: 'reset', rsep: ',', skull: '!!',
+  ascii:   { effort: '!', branch: 'git:', worktree: 'wt:', dir: 'dir:', duration: '',
+             lines: '', r5h: '5h', r7d: '7d', rspend: 'spend', rreset: 'reset', rsep: ',', skull: '!!',
              vim: 'V', agent: '@',
              barFill: '#', barEmpty: '-',
              sep: '|', skills: '*', hr: '-' },
@@ -154,12 +154,13 @@ function formatPeriodCost(cost, limit, prefix) {
 }
 
 /**
- * Format the monthly cost against its budget: `m $X/$L (P%)`, % floored like the spend-limit chip.
+ * Format the monthly cost against its budget: `m $X/$10K (P%)`, % floored like the spend-limit chip.
  */
 function formatBudgetCost(cost, limit, prefix) {
   if (!cost || cost <= 0) return '';
   const pct = Math.floor(cost / limit * 100);
-  return colorByTier(cost / limit, BUDGET_TIERS)(`${prefix}${money(cost)}/${money(limit)} (${pct}%)`);
+  const compactLimit = '$' + formatCompact(limit).toUpperCase();
+  return colorByTier(cost / limit, BUDGET_TIERS)(`${prefix}${money(cost)}/${compactLimit} (${pct}%)`);
 }
 
 /**
@@ -167,13 +168,18 @@ function formatBudgetCost(cost, limit, prefix) {
  */
 function formatDuration(ms, icon) {
   if (ms == null || ms <= 0) return '';
+  return [icon, formatElapsed(ms)].filter(Boolean).join(' ');
+}
+
+function formatElapsed(ms) {
   const s = Math.floor(ms / 1000);
-  if (s < 60) return `${icon} ${s}s`;
+  if (s < 60) return `${s}s`;
   const m = Math.floor(s / 60);
-  if (m < 60) return `${icon} ${m}m`;
+  if (m < 60) return `${m}m`;
   const h = Math.floor(m / 60);
   const rem = m % 60;
-  return rem > 0 ? `${icon} ${h}h ${rem}m` : `${icon} ${h}h`;
+  if (rem === 0) return `${h}h`;
+  return `${h}h ${rem}m`;
 }
 
 /**
@@ -449,7 +455,10 @@ function render(data, env) {
       // against. The MAX_LIVE_DELTA clamp stays on the raw basis (it bounds a
       // pricing-basis artefact, not a displayed amount).
       const cm = resolveCostMultiplier(env.STATUSLINE_COST_MULTIPLIER);
-      const costParts = [formatCost(sessionTotal * cm, budgetOptedOut ? '' : 's ', totalDurationMs)];
+      const isBurnRateHidden = env.STATUSLINE_NO_BURN_RATE != null;
+      let burnRateDurationMs = totalDurationMs;
+      if (isBurnRateHidden) burnRateDurationMs = 0;
+      const costParts = [formatCost(sessionTotal * cm, budgetOptedOut ? '' : 's ', burnRateDurationMs)];
       if (!budgetOptedOut) {
         const { daily, weekly, monthly } = sumPeriods(perSession, new Date(), undefined, resolveTimezone(env));
         const periods = resolveCostPeriods(env.STATUSLINE_COST_PERIODS);
@@ -478,7 +487,7 @@ function render(data, env) {
     const addedParts = [];
     if (linesAdded > 0) addedParts.push(green(`+${linesAdded}`));
     if (linesRemoved > 0) addedParts.push(red(`-${linesRemoved}`));
-    if (addedParts.length > 0) add('lines', `${icons.lines} ${addedParts.join(' ')}`);
+    if (addedParts.length > 0) add('lines', [icons.lines, ...addedParts].filter(Boolean).join(' '));
 
     // Rate limits (Claude.ai Pro/Max 5h/7d + gateway spend limit) — merged into one segment
     if (segEnabled('ratelimits')) {

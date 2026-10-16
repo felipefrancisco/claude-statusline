@@ -97,7 +97,7 @@ Sonnet 5 ┊ ⎇ main ┊ ▸ claude-statusline ┊ s $0.42 $8.17/h · d $9.72 �
 And `ascii`:
 
 ```text
-Sonnet 5 | git: main | dir: claude-statusline | s $0.42 $8.17/h , d $9.72 , w $31.87 , m $112.27 | t: 3m | d +47 -12 | ---------- 9% , 19k
+Sonnet 5 | git: main | dir: claude-statusline | s $0.42 $8.17/h , d $9.72 , w $31.87 , m $112.27 | 3m | +47 -12 | ---------- 9% , 19k
 ```
 
 The full glyph table for each mode lives in `ICON_SETS` inside [`hooks/statusline.js`](hooks/statusline.js).
@@ -125,6 +125,7 @@ Everything is configured with environment variables, set under `env` in `~/.clau
 | `STATUSLINE_MONTHLY_BUDGET` | `1000` | monthly budget driving d/w/m chip colors; `0` hides those chips. Unset → a monthly gateway spend limit (`limit_usd`) if present |
 | `STATUSLINE_COST_PERIODS` | `d,w,m` | which period chips render next to `s`. See [Cost tracking](#cost-tracking) |
 | `STATUSLINE_MONTHLY_PROGRESS` | unset | set it to anything to show the `m` chip as spend over budget with a % |
+| `STATUSLINE_NO_BURN_RATE` | unset | set it to anything to hide the `$X/h` burn rate on the `s` chip |
 | `STATUSLINE_COST_MULTIPLIER` | `1` | scales the displayed cost to match a plan meter. See [Matching your plan's billing page](#matching-your-plans-billing-page) |
 | `STATUSLINE_TIMEZONE` | system local | IANA zone deciding the day/week/month cost boundaries. See [Timezone](#timezone) |
 | `STATUSLINE_PRICING_NO_FETCH` | unset | set it to anything to block the background price fetch and stay on the bundled snapshot |
@@ -192,7 +193,7 @@ The d/w/m totals are rebuilt once per prompt by the `UserPromptSubmit` hook (`ho
 }
 ```
 
-`STATUSLINE_COST_PERIODS` picks which period chips render, as a comma list of `d`, `w` and `m`. Unset shows all three. `STATUSLINE_MONTHLY_PROGRESS` turns the `m` chip into spend over budget, e.g. `m $1234.00/$10000.00 (12%)`:
+`STATUSLINE_COST_PERIODS` picks which period chips render, as a comma list of `d`, `w` and `m`. Unset shows all three. `STATUSLINE_MONTHLY_PROGRESS` turns the `m` chip into spend over budget, e.g. `m $1234.00/$10K (12%)`:
 
 ```json
 "env": {

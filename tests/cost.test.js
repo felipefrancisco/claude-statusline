@@ -93,6 +93,12 @@ test('burn rate rounds to integer at ≥$100/h', async () => {
   assert.ok(stripAnsi(raw).includes('$600/h'));
 });
 
+test('STATUSLINE_NO_BURN_RATE hides the burn rate', async () => {
+  const raw = await runRaw(inpDur(6, 30 * 60 * 1000), { XDG_STATE_HOME: EMPTY_STATE, STATUSLINE_NO_BURN_RATE: '1' });
+  assert.ok(stripAnsi(raw).includes('s $6.00'));
+  assert.ok(!stripAnsi(raw).includes('/h'));
+});
+
 test('burn rate hidden under 60s', async () => {
   const raw = await runRaw(inpDur(1, 30 * 1000), { XDG_STATE_HOME: EMPTY_STATE });
   assert.ok(!stripAnsi(raw).includes('/h'));

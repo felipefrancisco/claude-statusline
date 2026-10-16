@@ -230,7 +230,7 @@ test('STATUSLINE_MONTHLY_PROGRESS → m chip shows spend over budget with floore
   const i = baseInput();
   i.session_id = 'current';
   const out = await run(i, { XDG_STATE_HOME: xdg, STATUSLINE_MONTHLY_BUDGET: '10000', STATUSLINE_MONTHLY_PROGRESS: '1' });
-  assert.ok(out.includes('m $1234.00/$10000.00 (12%)'));
+  assert.ok(out.includes('m $1234.00/$10K (12%)'));
 });
 
 test('m chip without STATUSLINE_MONTHLY_PROGRESS stays a plain amount', async () => {
@@ -239,7 +239,7 @@ test('m chip without STATUSLINE_MONTHLY_PROGRESS stays a plain amount', async ()
   i.session_id = 'current';
   const out = await run(i, { XDG_STATE_HOME: xdg, STATUSLINE_MONTHLY_BUDGET: '10000' });
   assert.ok(out.includes('m $1234.00'));
-  assert.ok(!out.includes('/$10000.00'));
+  assert.ok(!out.includes('/$10K'));
 });
 
 test('STATUSLINE_COST_PERIODS=m → s and m only, no d/w', async () => {
