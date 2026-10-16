@@ -224,3 +224,32 @@ test('`?` marker is absent on an older summary that predates the fields', async 
   i.cost = { total_cost_usd: 0 };
   assert.ok(!(await run(i, { XDG_STATE_HOME: xdg, STATUSLINE_MONTHLY_BUDGET: '300' })).includes('?'));
 });
+
+test('STATUSLINE_MONTHLY_PROGRESS → m chip shows spend over budget with floored %', async () => {
+  const xdg = stateWithCache({ other: { days: { [todayKey()]: 1234 }, total: 1234 } });
+  const i = baseInput();
+  i.session_id = 'current';
+  const out = await run(i, { XDG_STATE_HOME: xdg, STATUSLINE_MONTHLY_BUDGET: '10000', STATUSLINE_MONTHLY_PROGRESS: '1' });
+  assert.ok(out.includes('m $1234.00/$10000.00 (12%)'));
+});
+
+test('m chip without STATUSLINE_MONTHLY_PROGRESS stays a plain amount', async () => {
+  const xdg = stateWithCache({ other: { days: { [todayKey()]: 1234 }, total: 1234 } });
+  const i = baseInput();
+  i.session_id = 'current';
+  const out = await run(i, { XDG_STATE_HOME: xdg, STATUSLINE_MONTHLY_BUDGET: '10000' });
+  assert.ok(out.includes('m $1234.00'));
+  assert.ok(!out.includes('/$10000.00'));
+});
+
+test('STATUSLINE_COST_PERIODS=m → s and m only, no d/w', async () => {
+  const xdg = stateWithCache({ other: { days: { [todayKey()]: 2 }, total: 2 } });
+  const i = baseInput();
+  i.session_id = 'current';
+  i.cost = { total_cost_usd: 3 };
+  const out = await run(i, { XDG_STATE_HOME: xdg, STATUSLINE_MONTHLY_BUDGET: '300', STATUSLINE_COST_PERIODS: 'm' });
+  assert.ok(out.includes('s $3.00'));
+  assert.ok(out.includes('m $5.00'));
+  assert.ok(!out.includes('d $'));
+  assert.ok(!out.includes('w $'));
+});

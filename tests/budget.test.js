@@ -1,7 +1,7 @@
 'use strict';
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { resolveBudget } = require('../lib/budget');
+const { resolveBudget, resolveCostPeriods } = require('../lib/budget');
 
 test('unset → $1000 default, not opted out', () => {
   const b = resolveBudget(undefined);
@@ -74,4 +74,15 @@ test('cost multiplier: 0, negative and non-numeric fall back to 1', () => {
   for (const v of ['0', '-1', 'abc', '1.15x', '$1.15', NaN, Infinity]) {
     assert.equal(resolveCostMultiplier(v), 1, `${String(v)}`);
   }
+});
+
+test('resolveCostPeriods: unset/empty → all of d, w, m', () => {
+  assert.deepEqual([...resolveCostPeriods(undefined)], ['d', 'w', 'm']);
+  assert.deepEqual([...resolveCostPeriods('  ')], ['d', 'w', 'm']);
+});
+
+test('resolveCostPeriods: picks listed periods, drops unknown names', () => {
+  assert.deepEqual([...resolveCostPeriods('m')], ['m']);
+  assert.deepEqual([...resolveCostPeriods(' m , d ')], ['d', 'm']);
+  assert.deepEqual([...resolveCostPeriods('x')], []);
 });

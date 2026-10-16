@@ -9,7 +9,7 @@ const { dim, bold, green, yellow, red, colorByTier, SESSION_TIERS, BUDGET_TIERS 
 const { readSummary } = require('../lib/cost-aggregate');
 const { sumPeriods } = require('../lib/periods');
 const { resolveTimezone } = require('../lib/timezone');
-const { resolveBudget, resolveCostMultiplier, isMonthly } = require('../lib/budget');
+const { resolveBudget, resolveCostMultiplier, resolveCostPeriods, isMonthly } = require('../lib/budget');
 const { formatCompact, money, MONTHS } = require('../lib/format');
 
 // Terminal width, for the trailing rule and for wrapping segments onto
@@ -151,6 +151,15 @@ function formatCost(totalCost, prefix = '', durationMs = 0) {
 function formatPeriodCost(cost, limit, prefix) {
   if (!cost || cost <= 0) return '';
   return colorByTier(cost / limit, BUDGET_TIERS)(prefix + money(cost));
+}
+
+/**
+ * Format the monthly cost against its budget: `m $X/$L (P%)`, % floored like the spend-limit chip.
+ */
+function formatBudgetCost(cost, limit, prefix) {
+  if (!cost || cost <= 0) return '';
+  const pct = Math.floor(cost / limit * 100);
+  return colorByTier(cost / limit, BUDGET_TIERS)(`${prefix}${money(cost)}/${money(limit)} (${pct}%)`);
 }
 
 /**
@@ -443,11 +452,12 @@ function render(data, env) {
       const costParts = [formatCost(sessionTotal * cm, budgetOptedOut ? '' : 's ', totalDurationMs)];
       if (!budgetOptedOut) {
         const { daily, weekly, monthly } = sumPeriods(perSession, new Date(), undefined, resolveTimezone(env));
-        costParts.push(
-          formatPeriodCost((daily + periodDelta) * cm, dailyLimit, 'd '),
-          formatPeriodCost((weekly + periodDelta) * cm, weeklyLimit, 'w '),
-          formatPeriodCost((monthly + periodDelta) * cm, monthlyBudget, 'm '),
-        );
+        const periods = resolveCostPeriods(env.STATUSLINE_COST_PERIODS);
+        if (periods.has('d')) costParts.push(formatPeriodCost((daily + periodDelta) * cm, dailyLimit, 'd '));
+        if (periods.has('w')) costParts.push(formatPeriodCost((weekly + periodDelta) * cm, weeklyLimit, 'w '));
+        const isMonthlyProgressEnabled = env.STATUSLINE_MONTHLY_PROGRESS != null;
+        const formatMonthly = isMonthlyProgressEnabled ? formatBudgetCost : formatPeriodCost;
+        if (periods.has('m')) costParts.push(formatMonthly((monthly + periodDelta) * cm, monthlyBudget, 'm '));
       }
       const costShown = costParts.filter(Boolean);
       // Mark a total we can't fully stand behind: some call in the cache was billed
