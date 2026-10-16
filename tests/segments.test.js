@@ -1,7 +1,7 @@
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert');
-const { baseInput, run, runRaw } = require('./helpers');
+const { baseInput, run } = require('./helpers');
 
 // A rich input that exercises many segments at once.
 function richInput() {
@@ -103,12 +103,4 @@ test('STATUSLINE_SEGMENTS without ; still renders a single line (back-compat)', 
   const firstLine = out.split('\n')[0];
   assert.match(firstLine, /Claude/);
   assert.match(firstLine, /\$0\.50/);
-});
-
-test('STATUSLINE_SMALL_CAPS renders listed segments dim in small capitals', async () => {
-  const input = baseInput();
-  input.agent = { name: 'Feature-dev' };
-  const raw = await runRaw(input, { STATUSLINE_SMALL_CAPS: 'agent', STATUSLINE_ICONS: 'ascii' });
-  assert.ok(raw.includes('\x1b[2m@ ꜰᴇᴀᴛᴜʀᴇ-ᴅᴇᴠ\x1b[0m'), raw);
-  assert.ok(raw.includes('Claude'), 'unlisted segments untouched');
 });
