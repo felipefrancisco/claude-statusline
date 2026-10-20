@@ -5,12 +5,8 @@ on top of [SETUP_PROMPT.md](SETUP_PROMPT.md).
 
 ## Source
 
-Run the renderer from the `feat/no-swp-card/cost-chip-period-filter` branch of the
-`felipefrancisco/claude-statusline` fork. `STATUSLINE_COST_PERIODS`, `STATUSLINE_MONTHLY_PROGRESS`,
-`STATUSLINE_NO_BURN_RATE` and `STATUSLINE_WORKTREE_LAST_SEGMENT` exist only there until it merges.
-
-Expected checkout: `$HOME/projects/claude-statusline/.claude/worktrees/cost-chip-periods`.
-`<REPO>` below means that path.
+Run the renderer from `main` of the `felipefrancisco/claude-statusline` fork, checked out at
+`$HOME/projects/claude-statusline` with `main` tracking the fork. `<REPO>` below means that path.
 
 ## `~/.claude/settings.json`
 

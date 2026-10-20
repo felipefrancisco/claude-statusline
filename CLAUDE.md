@@ -1,5 +1,11 @@
 # CLAUDE.md
 
+## Workflow
+
+- Work only on `main` and push straight to `fork main`. No branches, worktrees or PRs.
+- `main` tracks `fork` (`felipefrancisco/claude-statusline`). `origin` is upstream; never push there.
+- The live statusline runs from this checkout. Local setup to apply on every machine: [LOCAL_CONFIG.md](LOCAL_CONFIG.md).
+
 ## Commands
 
 - Run all tests: `node --test tests/*.test.js`
